@@ -4,11 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.ColumnTransformer;
 
 import javax.persistence.*;
-import java.io.Serializable;
-import java.util.Set;
 
 @Entity
-@Table(name = "meeting_user")
+@Table(name = "user")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence")
@@ -32,7 +30,7 @@ public class User {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private UserGroup userGroup;
+    private UserRole userRole;
 
     public String getUsername() {
         return username;
@@ -50,18 +48,18 @@ public class User {
         return password;
     }
 
-    public UserGroup getUserGroup() {
-        return userGroup;
+    public UserRole getUserRole() {
+        return userRole;
     }
 
     protected User() {
     }
 
-    public User(final String username, final String firstname, final String lastname, final String password, final UserGroup userGroup) {
+    public User(final String username, final String firstname, final String lastname, final String password, final UserRole userRole) {
         this.username = username;
         this.firstname = firstname;
         this.lastname = lastname;
         this.password = password;
-        this.userGroup = userGroup;
+        this.userRole = userRole;
     }
 }
