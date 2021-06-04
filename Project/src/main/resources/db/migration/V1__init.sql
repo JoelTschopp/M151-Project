@@ -1,3 +1,4 @@
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
 CREATE TABLE public.article
 (
     id bigint NOT NULL,
@@ -49,3 +50,6 @@ TABLESPACE pg_default;
 
 ALTER TABLE public.buys
     OWNER to admin;
+
+INSERT INTO public.article_shop_user (id, firstname, lastname, password, user_role, username)
+VALUES (1, 'Joel', 'Tschopp', crypt('secret', gen_salt('bf', 8)), 'Admin', 'joegi');
