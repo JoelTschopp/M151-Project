@@ -23,4 +23,28 @@ public class Article {
         this.articleName = articleName;
         this.articlePrice = articlePrice;
     }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getArticleName() {
+        return articleName;
+    }
+
+    public void setArticleName(String articleName) {
+        this.articleName = articleName;
+    }
+
+    public String getArticlePrice() {
+        return articlePrice;
+    }
+
+    public void setArticlePrice(String articlePrice) {
+        this.articlePrice = articlePrice;
+    }
 }
