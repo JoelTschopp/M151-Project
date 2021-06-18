@@ -8,6 +8,10 @@ import M151.M151.repo.ArticleRepo;
 import M151.M151.repo.BuysRepo;
 import M151.M151.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +21,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
+@CacheConfig(cacheNames = {"buys"})
 public class BuysService {
     private final BuysRepo buysRepo;
     private final ArticleRepo articleRepo;
@@ -30,6 +35,7 @@ public class BuysService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(key = "0")
     public List<Buys> getAll() {
         final Iterable<Buys> buys = buysRepo.findAll();
 
@@ -39,9 +45,11 @@ public class BuysService {
     }
 
     @Transactional
+    @CachePut(key = "#result.buyId")
+    @CacheEvict(key = "0")
     public Buys add(final BuyWithArticleAndUser buyWithArticleAndUser) {
-        final Optional<Article> article = Optional.ofNullable(articleRepo.findById(buyWithArticleAndUser.getArticleId()));
-        final Optional<User> user = Optional.ofNullable(userRepo.findById(buyWithArticleAndUser.getUserId()));
+        final Optional<Article> article = articleRepo.findById(buyWithArticleAndUser.getArticleId());
+        final Optional<User> user = userRepo.findById(buyWithArticleAndUser.getUserId());
 
         if (article.isPresent() && user.isPresent()) {
             Buys buys = new Buys(article.get(), user.get());
@@ -51,6 +59,7 @@ public class BuysService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(key = "#id", unless = "#result == null")
     public Optional<Buys> get(final long id) {
         return Optional.ofNullable(buysRepo.findById(id));
     }

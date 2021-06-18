@@ -33,6 +33,30 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
+
+    public void setUserRole(UserRole userRole) {
+        this.userRole = userRole;
+    }
+
     public long getId() {return id;}
 
     public String getUsername() {

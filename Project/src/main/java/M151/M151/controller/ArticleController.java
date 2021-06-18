@@ -1,6 +1,7 @@
 package M151.M151.controller;
 
 import M151.M151.model.Article;
+import M151.M151.model.User;
 import M151.M151.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,5 +34,11 @@ public class ArticleController {
     @PostMapping("/")
     public Article add(@RequestBody final Article article) {
         return articleService.add(article);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('Admin')")
+    public Article update(@PathVariable final long id, @RequestBody final Article article) {
+        return articleService.update(id, article);
     }
 }

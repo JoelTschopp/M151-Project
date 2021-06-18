@@ -1,6 +1,7 @@
 package M151.M151.service;
 
 import M151.M151.model.Article;
+import M151.M151.model.User;
 import M151.M151.repo.ArticleRepo;
 import M151.M151.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
+@CacheConfig(cacheNames = {"article"})
 public class ArticleService {
     private final ArticleRepo articleRepo;
 
@@ -23,6 +25,7 @@ public class ArticleService {
     public ArticleService(final ArticleRepo articleRepo) { this.articleRepo = articleRepo;}
 
     @Transactional(readOnly = true)
+    @Cacheable(key = "0")
     public List<Article> getAll() {
         final Iterable<Article> articles = articleRepo.findAll();
         return StreamSupport
@@ -31,12 +34,28 @@ public class ArticleService {
     }
 
     @Transactional
+    @CachePut(key = "#result.articleId")
+    @CacheEvict(key = "0")
     public Article add(final Article article) {
         return articleRepo.save(article);
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(key = "#id", unless = "#result == null")
     public Optional<Article> get(final long id) {
-        return Optional.ofNullable(articleRepo.findById(id));
+        return articleRepo.findById(id);
+    }
+
+    @Transactional
+    @Caching(evict = {@CacheEvict(key = "#id"), @CacheEvict(key = "0")})
+    public Article update(final long id, final Article article)  {
+        final Optional<Article> optionalArticle = articleRepo.findById(id);
+        if (optionalArticle.isPresent()) {
+            Article foundArticle = optionalArticle.get();
+            foundArticle.setArticleName(article.getArticleName());
+            foundArticle.setArticlePrice(article.getArticlePrice());
+            return articleRepo.save(foundArticle);
+        }
+        return null;
     }
 }
